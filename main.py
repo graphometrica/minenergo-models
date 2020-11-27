@@ -38,7 +38,20 @@ def get_data():
     return XX
 
 
-@app.get("/forecast", response_model=JSONResponse)
+@app.options("/forecast")
+async def make_options_forecast():
+    return JSONResponse(
+        content="",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+        },
+    )
+
+
+@app.get("/forecast")
 async def make_foreacst(
     oil: Optional[float] = None,
     al: Optional[float] = None,
