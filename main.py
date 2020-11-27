@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -16,13 +17,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-class Response(BaseModel):
-    forecast_plot: str
-    trend_plot: str
-    daily_trend: str
-    data: Dict[int, Dict[str, Any]]
 
 
 def get_data():
@@ -45,7 +39,7 @@ def get_data():
     return XX
 
 
-@app.get("/forecast", response_model=Response)
+@app.get("/forecast", response_model=JSONResponse)
 async def make_foreacst(
     oil: Optional[float] = None,
     al: Optional[float] = None,
@@ -74,11 +68,19 @@ async def make_foreacst(
         plots = create_plots(model, fcst)
         fcst["ds"] = fcst["ds"].astype(str)
 
-        return dict(
-            forecast_plot=plots["forecast"],
-            trend_plot=plots["trend"],
-            daily_trend=plots["daily_part"],
-            data=fcst.to_dict(orient="index"),
+        return JSONResponse(
+            content=dict(
+                forecast_plot=plots["forecast"],
+                trend_plot=plots["trend"],
+                daily_trend=plots["daily_part"],
+                data=fcst.to_dict(orient="index"),
+            ),
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+            },
         )
     except Exception as e:
         return HTTPException(404, detail=str(e.with_traceback(None)))
