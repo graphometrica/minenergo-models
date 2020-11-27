@@ -1,10 +1,9 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 
 from scripts import create_plots, fit_model, make_forecast
 
@@ -69,11 +68,13 @@ async def make_foreacst(
         fcst["ds"] = fcst["ds"].astype(str)
 
         return JSONResponse(
-            content=dict(
-                forecast_plot=plots["forecast"],
-                trend_plot=plots["trend"],
-                daily_trend=plots["daily_part"],
-                data=fcst.to_dict(orient="index"),
+            content=json.dumps(
+                dict(
+                    forecast_plot=plots["forecast"],
+                    trend_plot=plots["trend"],
+                    daily_trend=plots["daily_part"],
+                    data=fcst.to_dict(orient="index"),
+                )
             ),
             headers={
                 "Access-Control-Allow-Origin": "*",
