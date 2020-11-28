@@ -59,24 +59,15 @@ def fit_model(data: pd.DataFrame) -> fbp.Prophet:
 def make_forecast(
     model: fbp.Prophet,
     data: pd.DataFrame,
+    fcst_data: pd.DataFrame,
     region: int,
     features: Optional[Dict[str, Optional[Any]]],
 ) -> pd.DataFrame:
-    now = datetime.now()
-    cash_file = Path(f"{region}_basefcst_{now.year}_{now.month}_{now.day}.pickle")
-
-    if cash_file.exists():
-        with open(cash_file, "br") as file:
-            fcst_data = pickle.load(file)
-    else:
-        fcst_data = create_fcst_df(data)
-        with open(cash_file, "bw") as file:
-            pickle.dump(fcst_data, file)
-
     last_row_ = data.loc[data["ds"] == data["ds"].max()]
+    dt = fcst_date.copy()
     if features:
         for f, val in features.items():
             if val:
-                fcst_data[f] = smooth_const_val(last_row_[f].iloc[0], val)
+                dt[f] = smooth_const_val(last_row_[f].iloc[0], val)
 
-    return model.predict(fcst_data)
+    return model.predict(dt)

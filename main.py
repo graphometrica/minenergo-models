@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 
 from scripts import (
     avg_col_vals,
+    create_fcst_df,
     create_plotly_plots,
     create_plots,
     create_svg_plots,
@@ -67,7 +68,11 @@ async def load_initial_data():
         f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
     )
     global_items["global_df"] = initial_load()
+    global_items["fcst_df"] = create_fcst_df(
+        global_items["global_df"].query("region == 11")
+    )
     print(f"Loaded {global_items['global_df'].shape[0]} rows of data")
+    print(f"Created {global_items['fcst_df'].shape[0]} rows for forecasting")
 
 
 @app.options("/forecast")
@@ -113,6 +118,7 @@ async def make_foreacst(
             model=model,
             data=data,
             region=region,
+            fcst_data=global_items["fcst_df"],
             features=dict(
                 oil=oil,
                 al=al,
@@ -219,6 +225,7 @@ async def make_foreacst_plotly(
             model=model,
             data=data,
             region=region,
+            fcst_data=global_items["fcst_df"],
             features=dict(
                 oil=oil,
                 al=al,
@@ -286,6 +293,7 @@ async def make_foreacst_plotly(
             model=model,
             data=data,
             region=region,
+            fcst_data=global_items["fcst_df"],
             features=dict(
                 oil=oil,
                 al=al,
@@ -350,6 +358,7 @@ async def make_foreacst_svg(
             model=model,
             data=data,
             region=region,
+            fcst_data=global_items["fcst_df"],
             features=dict(
                 oil=oil,
                 al=al,
