@@ -18,7 +18,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     bytes_ = io.StringIO()
     f.savefig(bytes_, format="svg")
     bytes_.seek(0)
-    hash_trend = bytes_.buffer
+    hash_trend = bytes_.getvalue()
     plt.close(f)
 
     # Trend
@@ -41,7 +41,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     bytes_ = io.StringIO()
     f.savefig(bytes_, format="svg")
     bytes_.seek(0)
-    hash_trend = bytes_.buffer
+    hash_trend = bytes_.getvalue()
     plt.close(f)
 
     # Daily component
@@ -71,7 +71,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     bytes_ = io.StringIO()
     f.savefig(bytes_, format="svg")
     bytes_.seek(0)
-    hash_daily = bytes_.buffer
+    hash_daily = bytes_.getvalue()
     plt.close(f)
 
     # Weekly component
@@ -101,7 +101,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     bytes_ = io.StringIO()
     f.savefig(bytes_, format="svg")
     bytes_.seek(0)
-    hash_weekly = bytes_.buffer
+    hash_weekly = bytes_.getvalue()
     plt.close(f)
 
     return dict(
