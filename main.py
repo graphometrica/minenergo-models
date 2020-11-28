@@ -15,8 +15,8 @@ from scripts import avg_col_vals, create_plots, fit_model, make_forecast
 bd_password = os.environ["POSTGRES_PASSWORD"]
 
 
-def initial_load(con):
-    return pd.read_sql("select * from minenergo.joined", con=con)
+def initial_load():
+    return pd.read_sql("select * from minenergo.joined", global_items["con"])
 
 
 app = FastAPI()
@@ -50,7 +50,7 @@ async def load_initial_data():
     global_items["con"] = create_engine(
         f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
     )
-    global_items["global_df"] = initial_load(con)
+    global_items["global_df"] = initial_load()
     print(f"Loaded {global_items['global_df'].shape[0]} rows of data")
 
 
