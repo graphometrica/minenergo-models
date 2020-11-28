@@ -14,17 +14,6 @@ from scripts import avg_col_vals, create_plots, fit_model, make_forecast
 
 bd_password = os.environ["POSTGRES_PASSWORD"]
 
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
 engine = create_engine(
     f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
 )
@@ -35,6 +24,16 @@ def initial_load():
 
 
 GLOBAL_DF = initial_load()
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_data(region: int) -> pd.DataFrame:
