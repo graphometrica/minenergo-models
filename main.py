@@ -29,6 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+global_items = {}
+
 
 def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
     now = datetime.now()
@@ -39,17 +41,17 @@ def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
             f"select * from minenergo.joined where ds='{query_cond}'", con=con
         )
         if new_data.shape[0] > 0:
-            global_df = pd.concat([GLOBAL_DF, new_data])
+            global_items["global_df"] = pd.concat([global_df, new_data])
     return global_df.query("region == {region}")
 
 
 @app.on_event("startup")
 async def load_initial_data():
-    con = create_engine(
+    global_items["con"] = create_engine(
         f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
     )
-    global_df = initial_load(con)
-    print(f"Loaded {global_df.shape[0]} rows of data")
+    global_items["global_df"] = initial_load(con)
+    print(f"Loaded {global_items['global_df'].shape[0]} rows of data")
 
 
 @app.options("/forecast")
@@ -77,7 +79,7 @@ async def make_foreacst(
     rub: Optional[float] = None,
 ):
     try:
-        data = get_data(region, con, global_df)
+        data = get_data(region, global_items["con"], global_items["global_df"])
 
         cur_time = datetime.now()
         model_path = Path(
@@ -142,7 +144,7 @@ async def options_average_features():
 @app.get("/avg_features")
 async def average_features(region: int):
     try:
-        data = get_data(region, con, global_df)
+        data = get_data(region, global_items["con"], global_items["global_df"])
 
         return JSONResponse(
             content=avg_col_vals(data),
