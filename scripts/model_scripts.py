@@ -63,7 +63,7 @@ def make_forecast(
     features: Optional[Dict[str, Optional[Any]]],
 ) -> pd.DataFrame:
     now = datetime.now()
-    cash_file = Path(f"{region}_basefcst_{now.year}_{now_month}_{now_day}.pickle")
+    cash_file = Path(f"{region}_basefcst_{now.year}_{now.month}_{now.day}.pickle")
 
     if cash_file.exists:
         with open(cash_file, "br") as file:
