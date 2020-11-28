@@ -31,7 +31,7 @@ engine = create_engine(
 
 
 def initial_load():
-    return pd.read_sql("select * from miniergo.joined", con=engine)
+    return pd.read_sql("select * from minenergo.joined", con=engine)
 
 
 GLOBAL_DF = initial_load()
@@ -43,7 +43,7 @@ def get_data(region: int) -> pd.DataFrame:
     if (now - max_dt) / 3600 > 1:
         query_cond = now.strftime(fmt="%Y-%m-%d %H:00:00")
         new_data = pd.read_sql(
-            f"select * from miniergo.joined where ds='{query_cond}'", con=engine
+            f"select * from minenergo.joined where ds='{query_cond}'", con=engine
         )
         if new_data.shape[0] > 0:
             GLOBAL_DF = pd.concat([GLOBAL_DF, new_data])
