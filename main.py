@@ -112,6 +112,7 @@ async def make_foreacst(
         fcst = make_forecast(
             model=model,
             data=data,
+            region=region,
             features=dict(
                 oil=oil,
                 al=al,
