@@ -45,10 +45,11 @@ def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
 
 @app.on_event("startup")
 async def load_initial_data():
-    engine = create_engine(
+    con = create_engine(
         f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
     )
-    global_df = initial_load(engine)
+    global_df = initial_load(con)
+    print(f"Loaded {global_df.shape[0]} rows of data")
 
 
 @app.options("/forecast")
