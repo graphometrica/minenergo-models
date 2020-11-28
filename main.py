@@ -51,7 +51,7 @@ global_items = {}
 def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
     now = datetime.now()
     max_dt = global_df["ds"].max().to_pydatetime()
-    if (now - max_dt).seconds / 3600 > 1:
+    if (now - max_dt).seconds / 3600 > 72:
         query_cond = now.strftime("%Y-%m-%d %H:00:00")
         new_data = pd.read_sql(
             f"select * from minenergo.joined where ds='{query_cond}'", con=con
@@ -99,7 +99,7 @@ async def make_foreacst(
 
         cur_time = datetime.now()
         model_path = Path(
-            f"model_{cur_time.year}_{cur_time.month}_{cur_time.day}_{cur_time.hour}_{region}.pickle"
+            f"model_{cur_time.year}_{cur_time.month}_{cur_time.day}_{region}.pickle"
         )
         if model_path.exists():
             with model_path.open("br") as file:
