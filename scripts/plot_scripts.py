@@ -11,19 +11,19 @@ import pandas as pd
 
 def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     # Create Forecast plot
-    f = plt.figure(figsize=(10, 8))
+    f = plt.figure(figsize=(18, 8))
     ax = f.add_subplot()
     model.plot(fcst, ax=ax)
     ax.set_xlabel("Date")
     ax.set_ylabel("Forecast")
     bytes_ = io.BytesIO()
-    f.savefig(bytes_, format="png", dpi=75)
+    f.savefig(bytes_, format="png", dpi=150)
     bytes_.seek(0)
     hash_forecast = base64.b64encode(bytes_.read())
     plt.close(f)
 
     # Trend
-    f = plt.figure(figsize=(14, 8))
+    f = plt.figure(figsize=(12, 8))
     ax = f.add_subplot()
     markers, caps, bars = ax.errorbar(
         x=fcst["ds"],
@@ -46,7 +46,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     plt.close(f)
 
     # Daily component
-    f = plt.figure(figsize=(14, 8))
+    f = plt.figure(figsize=(12, 8))
     ax = f.add_subplot()
     lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(1, "D"))
     fcst_ = fcst[fcst["ds"] >= lower_]
@@ -76,7 +76,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     plt.close(f)
 
     # Weekly component
-    f = plt.figure(figsize=(14, 8))
+    f = plt.figure(figsize=(12, 8))
     ax = f.add_subplot()
     lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(7, "D"))
     fcst_ = fcst[fcst["ds"] >= lower_]
