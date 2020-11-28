@@ -42,7 +42,7 @@ def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
         )
         if new_data.shape[0] > 0:
             global_items["global_df"] = pd.concat([global_df, new_data])
-    return global_df.query("region == {region}")
+    return global_df.query(f"region == {region}")
 
 
 @app.on_event("startup")
