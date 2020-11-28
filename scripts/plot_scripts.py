@@ -107,7 +107,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
 
     return dict(
         forecast=hash_forecast.decode("utf-8"),
-        trend=hash_daily.decode("utf-8"),
+        trend=hash_trend.decode("utf-8"),
         daily_part=hash_daily.decode("utf-8"),
         weekly_part=hash_weekly.decode("utf-8"),
     )
