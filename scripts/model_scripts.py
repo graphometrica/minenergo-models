@@ -64,7 +64,7 @@ def make_forecast(
     features: Optional[Dict[str, Optional[Any]]],
 ) -> pd.DataFrame:
     last_row_ = data.loc[data["ds"] == data["ds"].max()]
-    dt = fcst_date.copy()
+    dt = fcst_data.copy()
     if features:
         for f, val in features.items():
             if val:
