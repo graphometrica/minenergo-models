@@ -204,3 +204,6 @@ dmypy.json
 .prof
 
 # End of https://www.toptal.com/developers/gitignore/api/python,emacs,jupyternotebooks
+
+# Model pickles
+*pickle

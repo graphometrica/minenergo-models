@@ -17,7 +17,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     ax.set_xlabel("Date")
     ax.set_ylabel("Forecast")
     bytes_ = io.BytesIO()
-    f.savefig(bytes_, format="png", dpi=150)
+    f.savefig(bytes_, format="png", dpi=75)
     bytes_.seek(0)
     hash_forecast = base64.b64encode(bytes_.read())
     plt.close(f)
@@ -40,7 +40,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     [bar.set_alpha(0.2) for bar in bars]
     [cap.set_alpha(0.2) for cap in caps]
     bytes_ = io.BytesIO()
-    f.savefig(bytes_, format="png", dpi=150)
+    f.savefig(bytes_, format="png", dpi=75)
     bytes_.seek(0)
     hash_trend = base64.b64encode(bytes_.read())
     plt.close(f)
@@ -70,7 +70,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     [bar.set_alpha(0.2) for bar in bars]
     [cap.set_alpha(0.2) for cap in caps]
     bytes_ = io.BytesIO()
-    f.savefig(bytes_, format="png", dpi=150)
+    f.savefig(bytes_, format="png", dpi=75)
     bytes_.seek(0)
     hash_daily = base64.b64encode(bytes_.read())
     plt.close(f)

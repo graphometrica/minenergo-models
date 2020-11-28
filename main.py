@@ -1,3 +1,6 @@
+import pickle
+from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -5,7 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from scripts import create_plots, fit_model, make_forecast
+from scripts import avg_col_vals, create_plots, fit_model, make_forecast
 
 app = FastAPI()
 
@@ -64,7 +67,19 @@ async def make_foreacst(
 ):
     try:
         data = get_data()
-        model = fit_model(data)
+
+        cur_time = datetime.now()
+        model_path = Path(
+            f"model_{cur_time.year}_{cur_time.month}_{cur_time.day}_{cur_time.hour}_{region}.pickle"
+        )
+        if model_path.exists():
+            with model_path.open("br") as file:
+                model = pickle.load(file)
+        else:
+            model = fit_model(data)
+            with model_path.open("wb") as file:
+                pickle.dump(model, file)
+
         fcst = make_forecast(
             model=model,
             data=data,
@@ -88,6 +103,37 @@ async def make_foreacst(
                 daily_trend=plots["daily_part"],
                 data=fcst.to_dict(orient="index"),
             ),
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+            },
+        )
+    except Exception as e:
+        return HTTPException(404, detail=str(e.with_traceback(None)))
+
+
+@app.options("/avg_features")
+async def options_average_features():
+    return JSONResponse(
+        content="",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+        },
+    )
+
+
+@app.get("/avg_features")
+async def average_features(region: str):
+    try:
+        data = get_data()
+
+        return JSONResponse(
+            content=avg_col_vals(data),
             headers={
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json",
