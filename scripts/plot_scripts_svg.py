@@ -18,7 +18,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     bytes_ = io.StringIO()
     f.savefig(bytes_, format="svg")
     bytes_.seek(0)
-    hash_trend = bytes_.getvalue()
+    hash_forecast = bytes_.getvalue()
     plt.close(f)
 
     # Trend
