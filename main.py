@@ -1,18 +1,18 @@
 import os
 import pickle
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import create_engine
-from enum import Enum
 
 
-class GraphClass(Enum):
+class PlotType(Enum):
     FORECAST = "forecast"
     TREND = "trend"
     DAILY = "daily_part"
@@ -21,10 +21,10 @@ class GraphClass(Enum):
 
 from scripts import (
     avg_col_vals,
+    create_plotly_plots,
     create_plots,
     fit_model,
     make_forecast,
-    create_plotly_plots,
 )
 
 bd_password = os.environ["POSTGRES_PASSWORD"]
@@ -251,7 +251,7 @@ async def make_foreacst_plotly(
 @app.get("/forecast3", response_class=HTMLResponse)
 async def make_foreacst_plotly(
     region: int,
-    graph_type: PlotCLASS,
+    graph_type: PlotType,
     oil: Optional[float] = None,
     al: Optional[float] = None,
     gas: Optional[float] = None,
