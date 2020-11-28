@@ -7,26 +7,26 @@ import pandas as pd
 
 def avg_col_vals(current_data: pd.DataFrame) -> Dict[str, float]:
     last_ = pd.to_datetime(
-        current_data["date"].max().to_datetime64() - np.timedelta64(14, "D")
+        current_data["ds"].max().to_datetime64() - np.timedelta64(14, "D")
     )
     res = {}
     for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub"]:
-        res[col] = current_data.loc[current_data["date"] > last_, col].mean()
+        res[col] = current_data.loc[current_data["ds"] > last_, col].mean()
 
     return res
 
 
 def create_fcst_df(current_data: pd.DataFrame) -> pd.DataFrame:
     daterange = pd.date_range(
-        start=current_data["date"].max(), periods=30 * 24, freq="1h"
+        start=current_data["ds"].max(), periods=30 * 24, freq="1h"
     )
     columns = {"ds": daterange}
     last_ = pd.to_datetime(
-        current_data["date"].max().to_datetime64() - np.timedelta64(14, "D")
+        current_data["ds"].max().to_datetime64() - np.timedelta64(14, "D")
     )
     for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub"]:
         columns[col] = (
-            [current_data.loc[current_data["date"] > last_, col].mean()] * 30 * 24
+            [current_data.loc[current_data["ds"] > last_, col].mean()] * 30 * 24
         )
 
     return pd.DataFrame(columns)
