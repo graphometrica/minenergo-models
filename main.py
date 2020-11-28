@@ -14,16 +14,10 @@ from scripts import avg_col_vals, create_plots, fit_model, make_forecast
 
 bd_password = os.environ["POSTGRES_PASSWORD"]
 
-engine = create_engine(
-    f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
-)
 
+def initial_load(con):
+    return pd.read_sql("select * from minenergo.joined", con=con)
 
-def initial_load():
-    return pd.read_sql("select * from minenergo.joined", con=engine)
-
-
-GLOBAL_DF = initial_load()
 
 app = FastAPI()
 
@@ -36,17 +30,25 @@ app.add_middleware(
 )
 
 
-def get_data(region: int) -> pd.DataFrame:
+def get_data(region: int, con, global_df: pd.DataFrame) -> pd.DataFrame:
     now = datetime.now()
-    max_dt = GLOBAL_DF["ds"].max().to_pydatetime()
+    max_dt = global_df["ds"].max().to_pydatetime()
     if (now - max_dt) / 3600 > 1:
         query_cond = now.strftime(fmt="%Y-%m-%d %H:00:00")
         new_data = pd.read_sql(
-            f"select * from minenergo.joined where ds='{query_cond}'", con=engine
+            f"select * from minenergo.joined where ds='{query_cond}'", con=con
         )
         if new_data.shape[0] > 0:
-            GLOBAL_DF = pd.concat([GLOBAL_DF, new_data])
-    return GLOBAL_DF.query("region == {region}")
+            global_df = pd.concat([GLOBAL_DF, new_data])
+    return global_df.query("region == {region}")
+
+
+@app.on_event("startup")
+async def load_initial_data():
+    engine = create_engine(
+        f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
+    )
+    global_df = initial_load(engine)
 
 
 @app.options("/forecast")
@@ -74,7 +76,7 @@ async def make_foreacst(
     rub: Optional[float] = None,
 ):
     try:
-        data = get_data(region)
+        data = get_data(region, con, global_df)
 
         cur_time = datetime.now()
         model_path = Path(
@@ -137,9 +139,9 @@ async def options_average_features():
 
 
 @app.get("/avg_features")
-async def average_features(region: str):
+async def average_features(region: int):
     try:
-        data = get_data()
+        data = get_data(region, con, global_df)
 
         return JSONResponse(
             content=avg_col_vals(data),
