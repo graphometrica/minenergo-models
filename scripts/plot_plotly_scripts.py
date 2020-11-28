@@ -1,4 +1,5 @@
 import fbprophet as fbp
+import pandas as pd
 from fbprophet import plot
 from plotly.io import to_html
 
