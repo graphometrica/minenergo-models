@@ -1,4 +1,3 @@
-import json
 from typing import Optional
 
 import pandas as pd
@@ -54,6 +53,7 @@ async def make_options_forecast():
 
 @app.get("/forecast")
 async def make_foreacst(
+    region: str,
     oil: Optional[float] = None,
     al: Optional[float] = None,
     gas: Optional[float] = None,
@@ -82,13 +82,11 @@ async def make_foreacst(
         fcst["ds"] = fcst["ds"].astype(str)
 
         return JSONResponse(
-            content=json.dumps(
-                dict(
-                    forecast_plot=plots["forecast"],
-                    trend_plot=plots["trend"],
-                    daily_trend=plots["daily_part"],
-                    data=fcst.to_dict(orient="index"),
-                )
+            content=dict(
+                forecast_plot=plots["forecast"],
+                trend_plot=plots["trend"],
+                daily_trend=plots["daily_part"],
+                data=fcst.to_dict(orient="index"),
             ),
             headers={
                 "Access-Control-Allow-Origin": "*",
