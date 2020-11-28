@@ -100,6 +100,7 @@ async def make_foreacst(
     gazprom: Optional[float] = None,
     rusal: Optional[float] = None,
     rub: Optional[float] = None,
+    temp: Optional[float] = None,
 ):
     try:
         data = get_data(region, global_items["con"], global_items["global_df"])
@@ -197,6 +198,7 @@ async def make_foreacst_plotly(
     gazprom: Optional[float] = None,
     rusal: Optional[float] = None,
     rub: Optional[float] = None,
+    temp: Optional[float] = None,
 ):
     try:
         now = datetime.now()

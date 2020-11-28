@@ -35,7 +35,7 @@ def create_fcst_df(current_data: pd.DataFrame) -> pd.DataFrame:
 
     tmp_ = current_data.loc[current_data["ds"] > last_]
     last_row_ = tmp_.tail(1)
-    for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub"]:
+    for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub", "temp"]:
         columns[col] = smooth_const_val(last_row_[col].iloc[0], tmp_[col].mean())
 
     return pd.DataFrame(columns)
