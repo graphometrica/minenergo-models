@@ -1,3 +1,4 @@
+import os
 import pickle
 from datetime import datetime
 from pathlib import Path
@@ -7,8 +8,11 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy import create_engine
 
 from scripts import avg_col_vals, create_plots, fit_model, make_forecast
+
+bd_password = os.environ["POSTGRES_PASSWORD"]
 
 app = FastAPI()
 
@@ -21,24 +25,29 @@ app.add_middleware(
 )
 
 
-def get_data():
-    history = pd.read_csv("data/yahoo_history.csv", parse_dates=["Date"])
-    consumption = pd.read_csv("data/test_data.csv", parse_dates=["date"])
+engine = create_engine(
+    f"postgresql://graph_main:{bd_password}@35.226.152.97:5432/minenergo"
+)
 
-    consumption["Date"] = pd.to_datetime(consumption["date"].dt.date)
-    cols = [
-        "date",
-        "IBR_ActualConsumption",
-        "oil",
-        "al",
-        "gas",
-        "copper",
-        "gazprom",
-        "rusal",
-        "rub",
-    ]
-    XX = pd.merge(consumption, history, on="Date", how="left")[cols]
-    return XX
+
+def initial_load():
+    return pd.read_sql("select * from miniergo.joined", con=engine)
+
+
+GLOBAL_DF = initial_load()
+
+
+def get_data(region: int) -> pd.DataFrame:
+    now = datetime.now()
+    max_dt = GLOBAL_DF["ds"].max().to_pydatetime()
+    if (now - max_dt) / 3600 > 1:
+        query_cond = now.strftime(fmt="%Y-%m-%d %H:00:00")
+        new_data = pd.read_sql(
+            f"select * from miniergo.joined where ds='{query_cond}'", con=engine
+        )
+        if new_data.shape[0] > 0:
+            GLOBAL_DF = pd.concat([GLOBAL_DF, new_data])
+    return GLOBAL_DF.query("region == {region}")
 
 
 @app.options("/forecast")
@@ -56,7 +65,7 @@ async def make_options_forecast():
 
 @app.get("/forecast")
 async def make_foreacst(
-    region: str,
+    region: int,
     oil: Optional[float] = None,
     al: Optional[float] = None,
     gas: Optional[float] = None,
@@ -66,7 +75,7 @@ async def make_foreacst(
     rub: Optional[float] = None,
 ):
     try:
-        data = get_data()
+        data = get_data(region)
 
         cur_time = datetime.now()
         model_path = Path(
@@ -101,6 +110,7 @@ async def make_foreacst(
                 forecast_plot=plots["forecast"],
                 trend_plot=plots["trend"],
                 daily_trend=plots["daily_part"],
+                weekly_forecast=plots["weekly_forecast"],
                 data=fcst.to_dict(orient="index"),
             ),
             headers={

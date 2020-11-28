@@ -42,7 +42,7 @@ def fit_model(data: pd.DataFrame) -> fbp.Prophet:
     model.add_regressor("gazprom")
     model.add_regressor("rusal")
     model.add_regressor("rub")
-    model.fit(data.rename(columns={"date": "ds", "IBR_ActualConsumption": "y"}))
+    model.fit(data)
 
     return model
 

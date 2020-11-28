@@ -75,8 +75,38 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     hash_daily = base64.b64encode(bytes_.read())
     plt.close(f)
 
+    # Weekly component
+    f = plt.figure(figsize=(14, 8))
+    ax = f.add_subplot()
+    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(7, "D"))
+    fcst_ = fcst[fcst["ds"] >= lower_]
+    markers, caps, bars = ax.errorbar(
+        x=fcst_["ds"],
+        y=fcst_["weekly"],
+        yerr=np.vstack(
+            [
+                fcst_["weekly"] - fcst_["weekly_lower"],
+                fcst_["weekly_upper"] - fcst_["weekly"],
+            ]
+        ),
+        fmt="-",
+        label="Weekly Component",
+    )
+    ax.grid()
+    ax.legend()
+    ax.set_xlim(lower_)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%A"))
+
+    [bar.set_alpha(0.2) for bar in bars]
+    [cap.set_alpha(0.2) for cap in caps]
+    f.savefig(bytes_, format="png", dpi=75)
+    bytes_.seek(0)
+    hash_weekly = base64.b64encode(bytes_.read())
+    plt.close(f)
+
     return dict(
         forecast=hash_forecast.decode("utf-8"),
         trend=hash_daily.decode("utf-8"),
         daily_part=hash_daily.decode("utf-8"),
+        weekly_part=hash_weekly.decode("utf-8"),
     )
