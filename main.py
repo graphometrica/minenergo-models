@@ -348,7 +348,7 @@ async def make_foreacst_svg(
                 rub=rub,
             ),
         )
-        plots = create_plots_svg(model, fcst)
+        plots = create_svg_plots(model, fcst)
         fcst["ds"] = fcst["ds"].astype(str)
 
         return JSONResponse(
