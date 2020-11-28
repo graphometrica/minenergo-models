@@ -218,6 +218,7 @@ async def make_foreacst_plotly(
         fcst = make_forecast(
             model=model,
             data=data,
+            region=region,
             features=dict(
                 oil=oil,
                 al=al,
@@ -280,6 +281,7 @@ async def make_foreacst_plotly(
         fcst = make_forecast(
             model=model,
             data=data,
+            region=region,
             features=dict(
                 oil=oil,
                 al=al,
@@ -339,6 +341,7 @@ async def make_foreacst_svg(
         fcst = make_forecast(
             model=model,
             data=data,
+            region=region,
             features=dict(
                 oil=oil,
                 al=al,
