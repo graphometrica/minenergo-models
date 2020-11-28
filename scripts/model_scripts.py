@@ -33,10 +33,10 @@ def create_fcst_df(current_data: pd.DataFrame) -> pd.DataFrame:
         current_data["ds"].max().to_datetime64() - np.timedelta64(14, "D")
     )
 
-    tmp_ = current_data.loc[current_data["ds"] > last_].mean()
+    tmp_ = current_data.loc[current_data["ds"] > last_]
     last_row_ = tmp_.tail(1)
     for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub"]:
-        columns[col] = smooth_const_val(last_row_[col].iloc[0], tmp_[col])
+        columns[col] = smooth_const_val(last_row_[col].iloc[0], tmp_[col].mean())
 
     return pd.DataFrame(columns)
 
