@@ -99,6 +99,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
 
     [bar.set_alpha(0.2) for bar in bars]
     [cap.set_alpha(0.2) for cap in caps]
+    bytes_ = io.BytesIO()
     f.savefig(bytes_, format="png", dpi=75)
     bytes_.seek(0)
     hash_weekly = base64.b64encode(bytes_.read())
