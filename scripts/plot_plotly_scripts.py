@@ -22,11 +22,15 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     weekly = plot.plot_forecast_component_plotly(
         model, fcst[fcst["ds"] > lower_], name="weekly", figsize=(1400, 600)
     )
-    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(1, "M"))
+    lower_ = pd.to_datetime(
+        fcst["ds"].max().to_datetime64() - np.timedelta64(30.5, "D")
+    )
     monthly = plot.plot_forecast_component_plotly(
         model, fcst[fcst["ds"] > lower_], name="weekly", figsize=(1400, 600)
     )
-    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(91, "M"))
+    lower_ = pd.to_datetime(
+        fcst["ds"].max().to_datetime64() - np.timedelta64(91.5, "D")
+    )
     quarterly = plot.plot_forecast_component_plotly(
         model, fcst[fcst["ds"] > lower_], name="weekly", figsize=(1400, 600)
     )

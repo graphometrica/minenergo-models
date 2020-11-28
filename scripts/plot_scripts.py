@@ -108,7 +108,9 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     # Monthly component
     f = plt.figure(figsize=(12, 8))
     ax = f.add_subplot()
-    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(1, "M"))
+    lower_ = pd.to_datetime(
+        fcst["ds"].max().to_datetime64() - np.timedelta64(30.5, "D")
+    )
     fcst_ = fcst[fcst["ds"] >= lower_]
     markers, caps, bars = ax.errorbar(
         x=fcst_["ds"],
@@ -138,7 +140,9 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     # Weekly component
     f = plt.figure(figsize=(12, 8))
     ax = f.add_subplot()
-    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(7, "D"))
+    lower_ = pd.to_datetime(
+        fcst["ds"].max().to_datetime64() - np.timedelta64(91.5, "D")
+    )
     fcst_ = fcst[fcst["ds"] >= lower_]
     markers, caps, bars = ax.errorbar(
         x=fcst_["ds"],
