@@ -114,7 +114,7 @@ async def make_foreacst(
                 forecast_plot=plots["forecast"],
                 trend_plot=plots["trend"],
                 daily_trend=plots["daily_part"],
-                weekly_forecast=plots["weekly_forecast"],
+                weekly_forecast=plots["weekly_part"],
                 data=fcst.to_dict(orient="index"),
             ),
             headers={
