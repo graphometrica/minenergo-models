@@ -208,3 +208,6 @@ dmypy.json
 # Model pickles
 *pickle
 
+# IPYNB
+*.ipynb
+
