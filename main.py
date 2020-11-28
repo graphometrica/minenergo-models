@@ -264,7 +264,9 @@ async def make_foreacst_plotly(
     rub: Optional[float] = None,
 ):
     try:
+        now = datetime.now()
         data = get_data(region, global_items["con"], global_items["global_df"])
+        print(f"Data loaded in {(datetime.now() - now).seconds}")
 
         cur_time = datetime.now()
         model_path = Path(
@@ -277,7 +279,9 @@ async def make_foreacst_plotly(
             model = fit_model(data)
             with model_path.open("wb") as file:
                 pickle.dump(model, file)
+        print(f"Model loaded in {(datetime.now() - cur_time).seconds}")
 
+        now = datetime.now()
         fcst = make_forecast(
             model=model,
             data=data,
@@ -292,7 +296,11 @@ async def make_foreacst_plotly(
                 rub=rub,
             ),
         )
+        print(f"Forecast created in {(datetime.now() - now).seconds}")
+
+        now = datetime.now()
         plots = create_plotly_plots(model, fcst)
+        print(f"Plots created in {(datetime.now() - now).seconds}")
 
         return plots[graph_type.value]
     except Exception as e:
