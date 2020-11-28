@@ -13,7 +13,7 @@ def avg_col_vals(current_data: pd.DataFrame) -> Dict[str, float]:
         current_data["ds"].max().to_datetime64() - np.timedelta64(14, "D")
     )
     res = {}
-    for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub"]:
+    for col in ["oil", "al", "gas", "copper", "gazprom", "rusal", "rub", "temp"]:
         res[col] = current_data.loc[current_data["ds"] > last_, col].mean()
 
     return res
@@ -44,6 +44,9 @@ def create_fcst_df(current_data: pd.DataFrame) -> pd.DataFrame:
 def fit_model(data: pd.DataFrame) -> fbp.Prophet:
     model = fbp.Prophet()
     model.add_country_holidays(country_name="Russia")
+    model.add_seasonality(name="monthly", period=30.5, fourier_order=5)
+    model.add_seasonality(name="quarterly", period=91.25, fourier_order=5)
+    model.add_regressor("temp")
     model.add_regressor("oil")
     model.add_regressor("al")
     model.add_regressor("gas")

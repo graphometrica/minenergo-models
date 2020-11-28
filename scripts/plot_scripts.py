@@ -105,9 +105,71 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     hash_weekly = base64.b64encode(bytes_.read())
     plt.close(f)
 
+    # Monthly component
+    f = plt.figure(figsize=(12, 8))
+    ax = f.add_subplot()
+    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(1, "M"))
+    fcst_ = fcst[fcst["ds"] >= lower_]
+    markers, caps, bars = ax.errorbar(
+        x=fcst_["ds"],
+        y=fcst_["monthly"],
+        yerr=np.vstack(
+            [
+                fcst_["monthly"] - fcst_["monthly_lower"],
+                fcst_["monthly_upper"] - fcst_["monthly"],
+            ]
+        ),
+        fmt="-",
+        label="Monthly Component",
+    )
+    ax.grid()
+    ax.legend()
+    ax.set_xlim(lower_)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%d"))
+
+    [bar.set_alpha(0.2) for bar in bars]
+    [cap.set_alpha(0.2) for cap in caps]
+    bytes_ = io.BytesIO()
+    f.savefig(bytes_, format="png", dpi=75)
+    bytes_.seek(0)
+    hash_monthly = base64.b64encode(bytes_.read())
+    plt.close(f)
+
+    # Weekly component
+    f = plt.figure(figsize=(12, 8))
+    ax = f.add_subplot()
+    lower_ = pd.to_datetime(fcst["ds"].max().to_datetime64() - np.timedelta64(7, "D"))
+    fcst_ = fcst[fcst["ds"] >= lower_]
+    markers, caps, bars = ax.errorbar(
+        x=fcst_["ds"],
+        y=fcst_["quarterly"],
+        yerr=np.vstack(
+            [
+                fcst_["quarterly"] - fcst_["quarterly_lower"],
+                fcst_["quarterly_upper"] - fcst_["quarterly"],
+            ]
+        ),
+        fmt="-",
+        label="Quarterly Component",
+    )
+    ax.grid()
+    ax.legend()
+    ax.set_xlim(lower_)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%d"))
+
+    [bar.set_alpha(0.2) for bar in bars]
+    [cap.set_alpha(0.2) for cap in caps]
+    bytes_ = io.BytesIO()
+    f.savefig(bytes_, format="png", dpi=75)
+    bytes_.seek(0)
+    hash_quarterly = base64.b64encode(bytes_.read())
+    plt.close(f)
+
     return dict(
         forecast=hash_forecast.decode("utf-8"),
         trend=hash_trend.decode("utf-8"),
         daily_part=hash_daily.decode("utf-8"),
         weekly_part=hash_weekly.decode("utf-8"),
+        monthly_part=hash_monthly.decode("utf-8"),
+        quarterly_part=hash_quarterly.decode("utf-8"),
     )
