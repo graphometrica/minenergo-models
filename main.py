@@ -7,8 +7,17 @@ from typing import Optional
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from sqlalchemy import create_engine
+from enum import Enum
+
+
+class GraphClass(Enum):
+    FORECAST = "forecast"
+    TREND = "trend"
+    DAILY = "daily_part"
+    WEEKLY = "weekly_part"
+
 
 from scripts import (
     avg_col_vals,
@@ -235,5 +244,52 @@ async def make_foreacst_plotly(
                 "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
             },
         )
+    except Exception as e:
+        return HTTPException(404, detail=str(e.with_traceback(None)))
+
+
+@app.get("/forecast3", response_class=HTMLResponse)
+async def make_foreacst_plotly(
+    region: int,
+    graph_type: PlotCLASS,
+    oil: Optional[float] = None,
+    al: Optional[float] = None,
+    gas: Optional[float] = None,
+    copper: Optional[float] = None,
+    gazprom: Optional[float] = None,
+    rusal: Optional[float] = None,
+    rub: Optional[float] = None,
+):
+    try:
+        data = get_data(region, global_items["con"], global_items["global_df"])
+
+        cur_time = datetime.now()
+        model_path = Path(
+            f"model_{cur_time.year}_{cur_time.month}_{cur_time.day}_{cur_time.hour}_{region}.pickle"
+        )
+        if model_path.exists():
+            with model_path.open("br") as file:
+                model = pickle.load(file)
+        else:
+            model = fit_model(data)
+            with model_path.open("wb") as file:
+                pickle.dump(model, file)
+
+        fcst = make_forecast(
+            model=model,
+            data=data,
+            features=dict(
+                oil=oil,
+                al=al,
+                gas=gas,
+                copper=copper,
+                gazprom=gazprom,
+                rusal=rusal,
+                rub=rub,
+            ),
+        )
+        plots = create_plotly_plots(model, fcst)
+
+        return plots[graph_type.value]
     except Exception as e:
         return HTTPException(404, detail=str(e.with_traceback(None)))
