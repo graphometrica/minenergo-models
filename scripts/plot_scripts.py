@@ -76,7 +76,7 @@ def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dict[str, str]:
     plt.close(f)
 
     return dict(
-        forecast=hash_forecast,
-        trend=hash_daily,
-        daily_part=hash_daily,
+        forecast=hash_forecast.decode("utf-8"),
+        trend=hash_daily.decode("utf-8"),
+        daily_part=hash_daily.decode("utf-8"),
     )
