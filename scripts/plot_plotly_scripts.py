@@ -1,5 +1,6 @@
-from plotly.io import to_html
+import fbprophet as fbp
 from fbprophet import plot
+from plotly.io import to_html
 
 
 def create_plots(model: fbp.Prophet, fcst: pd.DataFrame) -> Dicr[str, str]:
