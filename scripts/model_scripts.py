@@ -65,7 +65,7 @@ def make_forecast(
     now = datetime.now()
     cash_file = Path(f"{region}_basefcst_{now.year}_{now.month}_{now.day}.pickle")
 
-    if cash_file.exists:
+    if cash_file.exists():
         with open(cash_file, "br") as file:
             fcst_data = pickle.load(file)
     else:
