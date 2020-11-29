@@ -55,3 +55,7 @@
 Код [для полной кросс-валидации](https://github.com/graphometrica/minenergo-models/blob/master/runnable/make_cross_validation.py). Из-за большой вычислительной нагрузки и долгого времени работы (порядка нескольких минут на одну модель, т.е. на один субъект РФ) вынесен из Backend в оффлайн-исполняемый файл.
 
 Все сгенерированные результаты находятся [тут](https://github.com/graphometrica/minenergo-models/tree/master/plots)
+
+### Эконометрическая модель
+
+Эконометрика это более "разовая" задача, при этом требующая болльшего участия человек в каждой модели. Поэтому все модели были обучены в "оффлайн" режиме. Процесс и результаты в [Jupyter Notebook](https://github.com/graphometrica/minenergo-models/blob/master/Experiments.ipynb)
