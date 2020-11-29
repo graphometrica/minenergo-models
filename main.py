@@ -247,7 +247,7 @@ async def make_foreacst_plotly(
 
 
 @app.options("/econometrics")
-async def options_econometrics(region: int):
+async def options_econometrics(reg_sys: int):
     try:
         data = get_data(region, global_items["con"], global_items["global_df"])
 
@@ -275,6 +275,7 @@ async def econometrics(reg_sys: int):
         )
         with filepath.open("r", encoding="utf-8") as file:
             res = json.load(file.read())
+        print(res.keys())
 
         return JSONResponse(
             content=res,
