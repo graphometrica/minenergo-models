@@ -1,5 +1,6 @@
 import os
 import pickle
+import json
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -241,5 +242,48 @@ async def make_foreacst_plotly(
         print(f"Plots created in {(datetime.now() - now).seconds}")
 
         return plots[graph_type.value]
+    except Exception as e:
+        return HTTPException(404, detail=str(e.with_traceback(None)))
+
+
+@app.options("/econometrics")
+async def options_econometrics(region: int):
+    try:
+        data = get_data(region, global_items["con"], global_items["global_df"])
+
+        return JSONResponse(
+            content=avg_col_vals(data),
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+            },
+        )
+    except Exception as e:
+        return HTTPException(404, detail=str(e.with_traceback(None)))
+
+
+@app.get("/econometrics", response_class=HTMLResponse)
+async def econometrics(reg_sys: int):
+    try:
+        filepath = (
+            Path(__file__)
+            .paren.joinpath("resources")
+            .joinpath(f"region")
+            .joinpath("results.json")
+        )
+        with filepath.open("r", encoding="utf-8") as file:
+            res = json.load(file.read())
+
+        return JSONResponse(
+            content=res,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Accept, Authorization, Content-Type, Access-Control-Allow-Headers, Access-Control-Request-Method, Content-length, Access-Control-Allow-Origin",
+            },
+        )
     except Exception as e:
         return HTTPException(404, detail=str(e.with_traceback(None)))
