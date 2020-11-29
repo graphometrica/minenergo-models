@@ -262,7 +262,7 @@ async def options_econometrics(reg_sys: int):
         return HTTPException(404, detail=str(e.with_traceback(None)))
 
 
-@app.get("/econometrics", response_class=HTMLResponse)
+@app.get("/econometrics")
 async def econometrics(reg_sys: int):
     try:
         filepath = (
