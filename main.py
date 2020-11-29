@@ -267,7 +267,7 @@ async def econometrics(reg_sys: int):
     try:
         filepath = (
             Path(__file__)
-            .paren.joinpath("resources")
+            .parent.joinpath("resources")
             .joinpath(f"{region}")
             .joinpath("results.json")
         )
