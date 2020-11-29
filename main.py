@@ -274,7 +274,7 @@ async def econometrics(reg_sys: int):
             .joinpath("results.json")
         )
         with filepath.open("r", encoding="utf-8") as file:
-            res = json.load(file.read())
+            res = json.loads(file.read())
         print(res.keys())
 
         return JSONResponse(
