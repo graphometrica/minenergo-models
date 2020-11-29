@@ -249,10 +249,8 @@ async def make_foreacst_plotly(
 @app.options("/econometrics")
 async def options_econometrics(reg_sys: int):
     try:
-        data = get_data(region, global_items["con"], global_items["global_df"])
-
         return JSONResponse(
-            content=avg_col_vals(data),
+            content="",
             headers={
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json",
@@ -270,7 +268,7 @@ async def econometrics(reg_sys: int):
         filepath = (
             Path(__file__)
             .paren.joinpath("resources")
-            .joinpath(f"region")
+            .joinpath(f"{region}")
             .joinpath("results.json")
         )
         with filepath.open("r", encoding="utf-8") as file:
@@ -287,4 +285,5 @@ async def econometrics(reg_sys: int):
             },
         )
     except Exception as e:
+        print(str(e.with_traceback(None)))
         return HTTPException(404, detail=str(e.with_traceback(None)))
