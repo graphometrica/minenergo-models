@@ -1,0 +1,27 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:               use_fact   R-squared:                       0.989
+Model:                            OLS   Adj. R-squared:                  0.984
+Method:                 Least Squares   F-statistic:                     206.6
+Date:                Sun, 29 Nov 2020   Prob (F-statistic):           3.41e-07
+Time:                        00:58:02   Log-Likelihood:                 7.4518
+No. Observations:                  11   AIC:                            -6.904
+Df Residuals:                       7   BIC:                            -5.312
+Df Model:                           3                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      9.5983      0.478     20.061      0.000       8.467      10.730
+temp          -0.1549      0.007    -23.530      0.000      -0.170      -0.139
+gas            0.5195      0.112      4.629      0.002       0.254       0.785
+gazprom        0.1260      0.049      2.560      0.038       0.010       0.242
+==============================================================================
+Omnibus:                        2.109   Durbin-Watson:                   2.151
+Prob(Omnibus):                  0.348   Jarque-Bera (JB):                0.870
+Skew:                          -0.003   Prob(JB):                        0.647
+Kurtosis:                       1.623   Cond. No.                         97.8
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
