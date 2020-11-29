@@ -15,6 +15,10 @@ symbols = {
     "rub": "RUB=X",
 }
 
+conn = create_engine(
+    f"postgresql://graph_main:{os.environ['POSTGRES_PASSWORD']}@35.226.152.97:5432/minenergo"
+)
+
 
 def load_symbol(name, sym):
     t = yf.Ticker(sym)
@@ -32,4 +36,4 @@ if __name__ == "__main__":
 
     df = reduce(lambda a, b: a.join(b), list_of_frames)
     df = df.fillna(method="ffill").reset_index(drop=False)
-    df.to_sql("yahoo_finance_2", conn, schema="public", if_exists="replace")
+    df.to_sql("yahoo_finance_3", conn, schema="public", if_exists="replace")
